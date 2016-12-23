@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<html>
+<style>
+*{
+	font-family:"Noto Sans";
+	box-sizing: border-box;
+	color: #eeeeee;
+	z-index:10;
+	position: relative;
+}
+
+body{
+	background-color: #333333;
+}
+
+div{
+	margin: 2px;
+	padding: 2px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: default;
+}
+
+.outer{
+	margin: 10px;
+	padding: 5px;
+}
+
+.button{
+	display: inline-block;
+	height: 30px;
+	width: 50px;
+	line-height: 25px;
+	background-color: #555555;
+	color: white;
+	cursor: default;
+	text-align: center;
+}
+
+.button:hover{
+	background-color: #222222;
+}
+
+.headline{
+	font-size: 120%;
+	border-bottom: 2px solid #cccccc;
+}
+
+#output{
+	font-size: 120%;
+}
+
+#bgwrap{
+	position:absolute;
+	cursor: default;
+	top: -900px;
+	left: -400px;
+}
+
+#background{
+	color: #222222;
+	font-size: 8000%;
+	z-index:1;
+	color: #303030;
+}
+
+textarea, input{
+	background-color: transparent;
+}
+
+</style>
+<script src="seedrandom.js"></script>
+<script>
+function htmlEntities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+var perms =  new Object();
+perms.a = "aaaaaa∝∆∧⍶⋉";
+perms.b = "b␢";
+perms.c = "c∁<⊂⊏⍧☇⊐⊑";
+perms.e = "e∈∋";
+perms.n = "n⊓∩"
+perms.u = "u⋁v⋃⊔";
+perms.t = "t†";
+perms.x = "x╳✗";
+
+var borders = [];
+borders[0] = "±±";
+borders[1] = "∓∓";
+borders[2] = "⊣⊢";
+borders[3] = "⊴⊵";
+borders[4] = "╣╠";
+borders[5] = "◁▷";
+borders[6] = "◄►";
+
+function init()
+{
+	console.log("init...");
+	buttons = document.getElementById("buttons");
+	for(var i = 0; i < borders.length; i++)
+	{
+		buttons.innerHTML += "<div class=\"button\" onclick=\"border("+i+")\">"+ htmlEntities(borders[i]) + "</div>"
+	}
+}
+
+function typing()
+{
+	var seed = document.getElementById("seed").value;
+	Math.seedrandom(seed);
+	
+	var line =	document.getElementById("input").value;
+	var output = " ";
+	for (var i = 0; i < line.length; i++)
+	{
+		if(perms[line[i]] == null)
+		{
+			output += line[i];
+		}
+		else
+		{
+			var perm = Math.floor(Math.random() * perms[line[i]].length);
+			output += perms[line[i]][perm];
+		}
+	}
+	output += " ";
+	document.getElementById("output").innerHTML = htmlEntities(output);
+}
+
+function border(index)
+{
+	typing();
+	var text = document.getElementById("output");
+	var output = borders[index][0];
+	output += text.innerHTML.substr(1, text.innerHTML.length - 2);
+	output += borders[index][1];
+	text.innerHTML = htmlEntities(output);
+}
+</script>
+<head>
+</head>
+<body onload="init()">
+<div id="bgwrap"><span id="background">⊕</span></div>
+<div class="outer">
+	<div class="headline">Input</div>
+	<div>
+		<textarea id="input" rows="2" cols="50" oninput="typing()"></textarea>
+	</div>
+	<div>
+		<div>Outer</div>
+		<div id="buttons">
+		</div>
+	</div>
+	<div>
+		<div>Seed</div>
+		<div>
+			<input type="text" id="seed" oninput="typing()"></input>
+		</div>
+	</div>
+</div>
+<div class="outer">
+	<div class="headline">Output</div>
+	<div id="output"><div>
+</div>
+</body>
+</html>
